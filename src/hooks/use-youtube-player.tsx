@@ -30,6 +30,7 @@ interface YoutubePlayerState {
 
 declare global {
   interface Window {
+    repeat: boolean | undefined;
     YT: {
       Player: any;
     };
@@ -37,6 +38,7 @@ declare global {
   }
 }
 
+// TODO: Move all of this into a global state,
 export const useYouTubePlayer = ({
   initialUrl,
 }: UseYouTubePlayerProps = {}) => {
@@ -56,7 +58,6 @@ export const useYouTubePlayer = ({
   });
 
   const [videoUrl, setVideoUrl] = useState<string>(initialUrl || "");
-  const [repeat, setRepeat] = useState<boolean>(false);
 
   // Load the YouTube API script
   useEffect(() => {
@@ -136,7 +137,8 @@ export const useYouTubePlayer = ({
 
     // Handle video end
     if (state === PlayerState.ENDED) {
-      if (repeat) {
+      if (!!window.repeat) {
+        console.log("repeating video");
         playerRef.current.seekTo(0, true);
         playerRef.current.playVideo();
         setYtState((prev) => ({
@@ -150,8 +152,8 @@ export const useYouTubePlayer = ({
     }
   };
 
-  const onSetRepeat = (repeat: boolean) => {
-    setRepeat(repeat);
+  const onSetRepeat = (nrepeat: boolean) => {
+    window.repeat = nrepeat;
   };
 
   // Callback for player errors
@@ -201,6 +203,7 @@ export const useYouTubePlayer = ({
       setYtState((prev) => ({ ...prev, videoId }));
     }
 
+    window.repeat = false;
     setVideoUrl(url);
     return true;
   };
@@ -286,8 +289,6 @@ export const useYouTubePlayer = ({
     mute,
     unmute,
     setVolume,
-    repeat,
-    setRepeat,
     onSetRepeat,
     isReady: ytState.isReady,
     isPlaying: ytState.isPlaying,
