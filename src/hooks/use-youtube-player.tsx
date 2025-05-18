@@ -153,10 +153,25 @@ export const useYouTubePlayer = ({
   };
 
   // Callback for player errors
-  const onPlayerError = () => {
-    toast.error("Error playing video", {
-      description: "There was an issue with the YouTube video.",
-    });
+  const onPlayerError = (error: any) => {
+    console.error("Error playing video", error);
+
+    if (error.data === 100) {
+      toast.error("Video is not available", {
+        description: "The video is not available.",
+      });
+    } else if (error.data === 101 || error.data === 150) {
+      toast.error("Video is not avialable in Ethereal Player", {
+        description:
+          "The video is requested by the owner to not be available in our app. Please select a different video.",
+        duration: 5000,
+      });
+    } else {
+      toast.error("Error playing video", {
+        description: "There was an issue with the YouTube video.",
+      });
+    }
+    loadVideo(initialUrl || "");
   };
 
   // Update the current time periodically when playing
