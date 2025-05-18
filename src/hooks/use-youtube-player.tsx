@@ -152,10 +152,6 @@ export const useYouTubePlayer = ({
     }
   };
 
-  const onSetRepeat = (nrepeat: boolean) => {
-    window.repeat = nrepeat;
-  };
-
   // Callback for player errors
   const onPlayerError = () => {
     toast.error("Error playing video", {
@@ -203,7 +199,6 @@ export const useYouTubePlayer = ({
       setYtState((prev) => ({ ...prev, videoId }));
     }
 
-    window.repeat = false;
     setVideoUrl(url);
     return true;
   };
@@ -289,7 +284,6 @@ export const useYouTubePlayer = ({
     mute,
     unmute,
     setVolume,
-    onSetRepeat,
     isReady: ytState.isReady,
     isPlaying: ytState.isPlaying,
     isBuffering: ytState.isBuffering,
