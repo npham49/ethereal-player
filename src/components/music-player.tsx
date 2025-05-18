@@ -12,16 +12,17 @@ import {
 } from "../lib/youtube-utils";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useVideoDataStore } from "@/store/video-data";
 
 const DEFAULT_VIDEO_URL = "https://www.youtube.com/watch?v=jfKfPfyJRdk"; // Lofi hip hop radio
 
 const MusicPlayer: React.FC = () => {
   const [inputUrl, setInputUrl] = useState<string>("");
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
-  const [videoTitle, setVideoTitle] = useState<string>("");
   const [isActive, setIsActive] = useState<boolean>(false);
   const [showEqualizer, setShowEqualizer] = useState<boolean>(false);
   const [repeat, setRepeat] = useState<boolean>(false);
+  const { videoTitle, videoAuthor } = useVideoDataStore();
 
   const {
     playerElementRef,
@@ -31,7 +32,6 @@ const MusicPlayer: React.FC = () => {
     isBuffering,
     togglePlay,
     skip,
-
     currentTime,
     duration,
     seekTo,
@@ -50,10 +50,6 @@ const MusicPlayer: React.FC = () => {
     if (videoId) {
       const thumbnail = getYoutubeThumbnailUrl(videoId);
       setThumbnailUrl(thumbnail);
-
-      // Attempt to fetch video title (this would require a server in real app)
-      // For now, just use a placeholder
-      setVideoTitle("YouTube Music");
       setIsActive(true);
     }
   }, [videoId]);
@@ -155,7 +151,7 @@ const MusicPlayer: React.FC = () => {
             <h3 className="text-lg font-medium text-white truncate">
               {videoTitle}
             </h3>
-            <p className="text-sm text-white/60">Background Music Player</p>
+            <p className="text-sm text-white/60">{videoAuthor}</p>
           </div>
         )}
 

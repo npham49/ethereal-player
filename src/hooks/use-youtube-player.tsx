@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { extractYoutubeVideoId } from "../lib/youtube-utils";
 import { toast } from "sonner";
+import { useVideoDataStore } from "@/store/video-data";
 
 // Define YouTube Player States
 enum PlayerState {
@@ -44,6 +45,8 @@ export const useYouTubePlayer = ({
 }: UseYouTubePlayerProps = {}) => {
   const playerRef = useRef<any | null>(null);
   const playerElementRef = useRef<HTMLDivElement | null>(null);
+  const setVideoTitle = useVideoDataStore((state) => state.setVideoTitle);
+  const setVideoAuthor = useVideoDataStore((state) => state.setVideoAuthor);
 
   const [ytState, setYtState] = useState<YoutubePlayerState>({
     player: null,
@@ -111,12 +114,20 @@ export const useYouTubePlayer = ({
   };
 
   // Callback when the player is ready
-  const onPlayerReady = (event: { target: { getDuration: () => number } }) => {
+  const onPlayerReady = (event: {
+    target: {
+      getDuration: () => number;
+      getVideoData: () => { title: string; author: string };
+    };
+  }) => {
     setYtState((prev) => ({
       ...prev,
       isReady: true,
       duration: event.target.getDuration(),
     }));
+
+    setVideoTitle(event.target.getVideoData().title);
+    setVideoAuthor(event.target.getVideoData().author);
   };
 
   // Callback when the player state changes
@@ -187,6 +198,18 @@ export const useYouTubePlayer = ({
         setYtState((prev) => ({ ...prev, currentTime }));
       }
     }, 1000);
+
+    if (playerRef.current && playerRef.current.videoTitle) {
+      setVideoTitle(playerRef.current.videoTitle);
+    }
+
+    if (
+      playerRef.current &&
+      playerRef.current.getVideoData() &&
+      playerRef.current.getVideoData().author
+    ) {
+      setVideoAuthor(playerRef.current.getVideoData().author);
+    }
 
     return () => clearInterval(interval);
   }, [ytState.isPlaying]);
