@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Pause, Play, RotateCcw, RotateCw } from "lucide-react";
+import { Pause, Play, Repeat1, RotateCcw, RotateCw } from "lucide-react";
 import YouTubeEmbed from "./youtube-embed";
 import { useYouTubePlayer } from "../hooks/use-youtube-player";
 import {
@@ -11,6 +11,7 @@ import {
   isValidYoutubeUrl,
 } from "../lib/youtube-utils";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const DEFAULT_VIDEO_URL = "https://www.youtube.com/watch?v=jfKfPfyJRdk"; // Lofi hip hop radio
 
@@ -29,6 +30,8 @@ const MusicPlayer: React.FC = () => {
     isBuffering,
     togglePlay,
     skip,
+    repeat,
+    onSetRepeat,
     currentTime,
     duration,
     seekTo,
@@ -153,7 +156,7 @@ const MusicPlayer: React.FC = () => {
         )}
 
         {/* Progress bar */}
-        <div className="mb-2">
+        <div>
           <Slider
             value={[currentTime]}
             min={0}
@@ -169,7 +172,7 @@ const MusicPlayer: React.FC = () => {
         </div>
 
         {/* Player controls */}
-        <div className="flex justify-center items-center space-x-4 mb-2">
+        <div className="flex justify-center items-center space-x-4 mb-5">
           <button
             onClick={() => skip(-10)}
             className="music-control-button"
@@ -192,6 +195,23 @@ const MusicPlayer: React.FC = () => {
             aria-label="Skip forward 10 seconds"
           >
             <RotateCw size={22} />
+          </button>
+          <button
+            onClick={() => onSetRepeat(!repeat)}
+            className={cn(
+              "w-12 h-12 flex items-center justify-center rounded-full active:scale-95 transition-all",
+              {
+                "bg-white hover:bg-white/10 text-black": repeat,
+                "bg-white/10 text-white hover:bg-white/20": !repeat,
+              }
+            )}
+            style={{
+              backgroundColor: repeat ? "white" : "rgba(255, 255, 255, 0.1)",
+              color: repeat ? "black" : "white",
+            }}
+            aria-label="Repeat"
+          >
+            <Repeat1 size={22} />
           </button>
         </div>
 

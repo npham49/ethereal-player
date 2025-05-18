@@ -56,6 +56,7 @@ export const useYouTubePlayer = ({
   });
 
   const [videoUrl, setVideoUrl] = useState<string>(initialUrl || "");
+  const [repeat, setRepeat] = useState<boolean>(false);
 
   // Load the YouTube API script
   useEffect(() => {
@@ -135,8 +136,18 @@ export const useYouTubePlayer = ({
 
     // Handle video end
     if (state === PlayerState.ENDED) {
-      setYtState((prev) => ({ ...prev, isPlaying: false, currentTime: 0 }));
+      if (repeat) {
+        playerRef.current.seekTo(0, true);
+        playerRef.current.playVideo();
+        setYtState((prev) => ({ ...prev, isPlaying: true }));
+      } else {
+        setYtState((prev) => ({ ...prev, isPlaying: false, currentTime: 0 }));
+      }
     }
+  };
+
+  const onSetRepeat = (repeat: boolean) => {
+    setRepeat(repeat);
   };
 
   // Callback for player errors
@@ -271,6 +282,9 @@ export const useYouTubePlayer = ({
     mute,
     unmute,
     setVolume,
+    repeat,
+    setRepeat,
+    onSetRepeat,
     isReady: ytState.isReady,
     isPlaying: ytState.isPlaying,
     isBuffering: ytState.isBuffering,
