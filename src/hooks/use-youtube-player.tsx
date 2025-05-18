@@ -139,7 +139,11 @@ export const useYouTubePlayer = ({
       if (repeat) {
         playerRef.current.seekTo(0, true);
         playerRef.current.playVideo();
-        setYtState((prev) => ({ ...prev, isPlaying: true }));
+        setYtState((prev) => ({
+          ...prev,
+          isPlaying: true,
+          currentTime: 0,
+        }));
       } else {
         setYtState((prev) => ({ ...prev, isPlaying: false, currentTime: 0 }));
       }
