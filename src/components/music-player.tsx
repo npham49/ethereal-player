@@ -21,6 +21,7 @@ const MusicPlayer: React.FC = () => {
   const [videoTitle, setVideoTitle] = useState<string>("");
   const [isActive, setIsActive] = useState<boolean>(false);
   const [showEqualizer, setShowEqualizer] = useState<boolean>(false);
+  const [repeat, setRepeat] = useState<boolean>(false);
 
   const {
     playerElementRef,
@@ -30,8 +31,7 @@ const MusicPlayer: React.FC = () => {
     isBuffering,
     togglePlay,
     skip,
-    repeat,
-    onSetRepeat,
+
     currentTime,
     duration,
     seekTo,
@@ -62,6 +62,10 @@ const MusicPlayer: React.FC = () => {
   useEffect(() => {
     setShowEqualizer(isPlaying && !isBuffering);
   }, [isPlaying, isBuffering]);
+
+  useEffect(() => {
+    window.repeat = repeat;
+  }, [repeat]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputUrl(e.target.value);
@@ -197,7 +201,7 @@ const MusicPlayer: React.FC = () => {
             <RotateCw size={22} />
           </button>
           <button
-            onClick={() => onSetRepeat(!repeat)}
+            onClick={() => setRepeat(!repeat)}
             className={cn(
               "w-12 h-12 flex items-center justify-center rounded-full active:scale-95 transition-all",
               {
